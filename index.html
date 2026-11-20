@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CineFinder - Movie Discovery App</title>
+  <meta name="description" content="Search films, filter by genre, inspect details, and save a personal watchlist powered by the TMDB API." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="#" class="logo" id="logo-reset">Cine<span>Finder</span></a>
+
+      <div class="search-wrap">
+        <input
+          type="search"
+          id="search-input"
+          placeholder="Search movies (e.g. Parasite, Dune, Interstellar)..."
+          autocomplete="off"
+        />
+      </div>
+
+      <button class="watchlist-tab" id="watchlist-toggle" type="button">
+        Watchlist (<span id="watchlist-count">0</span>)
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="controls">
+      <div class="heading-row">
+        <h1 id="view-title">Popular Movies</h1>
+        <p id="status-text" class="muted">Loading films...</p>
+      </div>
+
+      <div class="genre-bar" id="genre-bar">
+        <button class="genre-btn active" data-genre="all" data-label="Popular Movies" type="button">All</button>
+        <button class="genre-btn" data-genre="18" data-label="Drama" type="button">Drama</button>
+        <button class="genre-btn" data-genre="878" data-label="Sci-Fi" type="button">Sci-Fi</button>
+        <button class="genre-btn" data-genre="53" data-label="Thriller" type="button">Thriller</button>
+        <button class="genre-btn" data-genre="35" data-label="Comedy" type="button">Comedy</button>
+        <button class="genre-btn" data-genre="80" data-label="Crime" type="button">Crime</button>
+        <button class="genre-btn" data-genre="9648" data-label="Mystery" type="button">Mystery</button>
+        <button class="genre-btn" data-genre="16" data-label="Animation" type="button">Animation</button>
+      </div>
+    </section>
+
+    <section id="cards-grid" class="cards-grid" aria-live="polite"></section>
+
+    <nav class="pagination" id="pagination" aria-label="Pagination">
+      <button class="page-btn" id="prev-page" type="button">← Previous</button>
+      <span class="page-info" id="page-info">Page 1 of 1</span>
+      <button class="page-btn" id="next-page" type="button">Next →</button>
+    </nav>
+  </main>
+
+  <dialog id="detail-modal" class="modal">
+    <div class="modal-inner" id="modal-content"></div>
+  </dialog>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p>Built by Ralena Rousiaki</p>
+      <p class="muted">Film data via <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB API</a> (proxied via serverless function)</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
