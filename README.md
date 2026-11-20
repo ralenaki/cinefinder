@@ -2,7 +2,7 @@
 
 A responsive movie discovery web app built with vanilla HTML, CSS, and JavaScript, backed by a lightweight Vercel serverless API proxy to keep TMDB credentials off the client.
 
-**Live Demo:** [Add your Vercel URL here]
+**Live Demo:** https://cinefinder-eight.vercel.app/
 
 ## Architecture & API Security
 
