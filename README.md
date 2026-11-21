@@ -2,7 +2,7 @@
 
 A responsive movie discovery web app built with vanilla HTML, CSS, and JavaScript, backed by a lightweight Vercel serverless API proxy to keep TMDB credentials off the client.
 
-**Live Demo:** https://cinefinder-eight.vercel.app/
+**Live Demo:** [cinefinder-eight.vercel.app](https://cinefinder-eight.vercel.app/)
 
 ## Architecture & API Security
 
@@ -25,13 +25,14 @@ Browser (script.js)  ──►  /api/movies (Vercel Serverless Function)  ──
 - **Genre Filtering & Pagination:** Browse popular films or filter by genre with Previous/Next pagination across TMDB's catalog.
 - **Accessible Detail Modal:** Built on the native HTML `<dialog>` element (supports keyboard navigation, `Esc`, and backdrop dismissal) and lazily loads runtime + full genre metadata on open.
 - **Persistent Watchlist:** Stores saved titles in `localStorage` with instant count updates.
-- **Mobile-First Responsive Grid:** Adapts cleanly across desktop, tablet, and mobile viewports.
+- **Responsive Grid:** Adapts cleanly across desktop, tablet, and mobile viewports.
 
 ## Project Structure
 
 ```text
 ├── api/
 │   └── movies.js     # Serverless proxy for TMDB requests
+├── dev-server.js     # Zero-dependency local Node server for development
 ├── index.html        # Semantic markup + native <dialog> modal
 ├── style.css         # Responsive dark UI (CSS Grid, Flexbox, aspect-ratio)
 ├── script.js         # Client state, debounced search, pagination, localStorage
@@ -41,11 +42,12 @@ Browser (script.js)  ──►  /api/movies (Vercel Serverless Function)  ──
 
 ## Running Locally & Deploying
 
-1. Get a free API key from [TMDB Settings](https://www.themoviedb.org/settings/api).
+1. Get a free API key or Read Access Token from [TMDB Settings](https://www.themoviedb.org/settings/api).
 2. Create a `.env` file in the root (ignored by Git) using `.env.example`:
 
 ```env
 TMDB_API_KEY=your_key_here
 ```
 
-3. Run locally with the Vercel CLI (`vercel dev`), or deploy directly by importing the repository in [Vercel](https://vercel.com/) and adding `TMDB_API_KEY` under **Project Settings → Environment Variables**.
+3. Run locally with `node dev-server.js` (serves at `http://localhost:3000`) or via the Vercel CLI (`vercel dev`).
+4. Deploy by importing the repository in [Vercel](https://vercel.com/) and adding `TMDB_API_KEY` under **Project Settings → Environment Variables**.
