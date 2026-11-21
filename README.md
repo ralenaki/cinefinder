@@ -4,6 +4,12 @@ A responsive movie discovery web app built with vanilla HTML, CSS, and JavaScrip
 
 **Live Demo:** [cinefinder-eight.vercel.app](https://cinefinder-eight.vercel.app/)
 
+<p align="center">
+  <img src="assets/desktop_preview.png" alt="CineFinder desktop view" width="76%" />
+  &nbsp;
+  <img src="assets/mobile_preview.png" alt="CineFinder mobile view" width="20%" />
+</p>
+
 ## Architecture & API Security
 
 Static frontend apps cannot safely store private API keys in browser JavaScript or expose `.env` files to the client. To solve this cleanly without maintaining a full backend server:
