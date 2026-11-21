@@ -27,6 +27,8 @@ let activeGenreLabel = "Popular Movies";
 let showingWatchlist = false;
 let watchlist = loadWatchlist();
 let searchTimer = null;
+let latestFetchId = 0;
+let activeModalId = null;
 
 let currentPage = 1;
 let totalPages = 1;
@@ -69,10 +71,10 @@ function isInWatchlist(id) {
 
 function escapeHtml(str) {
   return String(str || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+  .replace(/&/g, "&amp;")
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;");
 }
 
 function getGenreNames(movie) {
@@ -103,42 +105,43 @@ function renderCards(movies) {
   if (!movies || movies.length === 0) {
     grid.innerHTML = `<div class="empty-box">${
       showingWatchlist
-        ? "Your watchlist is empty. Open any film to save it here."
-        : "No films found. Try another search or genre."
+      ? "Your watchlist is empty. Open any film to save it here."
+      : "No films found. Try another search or genre."
     }</div>`;
     return;
   }
 
   grid.innerHTML = movies
-    .map((movie) => {
-      const year = movie.release_date ? movie.release_date.slice(0, 4) : "N/A";
-      const rating = movie.vote_average ? movie.vote_average.toFixed(1) : null;
-      const genres = getGenreNames(movie);
-      const mainGenre = genres[0] || "Film";
-      const poster = movie.poster_path ? `${IMG_BASE}w342${movie.poster_path}` : null;
-      const title = escapeHtml(movie.title);
+  .map((movie) => {
+    const year = movie.release_date ? movie.release_date.slice(0, 4) : "N/A";
+    const rating = movie.vote_average ? movie.vote_average.toFixed(1) : null;
+    const genres = getGenreNames(movie);
+    const mainGenre = genres[0] || "Film";
+    const poster = movie.poster_path ? `${IMG_BASE}w342${movie.poster_path}` : null;
+    const title = escapeHtml(movie.title);
 
-      return `
-        <article class="card" data-id="${movie.id}" tabindex="0" role="button">
-          <div class="poster-box">
-            ${
-              poster
-                ? `<img src="${poster}" alt="${title}" loading="lazy" />`
-                : `<div class="no-poster">No poster available</div>`
-            }
-            ${rating && rating !== "0.0" ? `<span class="rating-badge">★ ${rating}</span>` : ""}
-          </div>
-          <div class="card-body">
-            <h2 class="card-title">${title}</h2>
-            <p class="card-meta">${year} · ${escapeHtml(mainGenre)}</p>
-          </div>
-        </article>
-      `;
-    })
-    .join("");
+    return `
+    <article class="card" data-id="${movie.id}" tabindex="0" role="button">
+    <div class="poster-box">
+    ${
+      poster
+      ? `<img src="${poster}" alt="${title}" loading="lazy" />`
+      : `<div class="no-poster">No poster available</div>`
+    }
+    ${rating && rating !== "0.0" ? `<span class="rating-badge">★ ${rating}</span>` : ""}
+    </div>
+    <div class="card-body">
+    <h2 class="card-title">${title}</h2>
+    <p class="card-meta">${year} · ${escapeHtml(mainGenre)}</p>
+    </div>
+    </article>
+    `;
+  })
+  .join("");
 }
 
 async function fetchMovies(params, titleText, page = 1) {
+  const requestId = ++latestFetchId;
   currentParams = params;
   currentTitle = titleText;
   currentPage = page;
@@ -152,6 +155,8 @@ async function fetchMovies(params, titleText, page = 1) {
     if (!res.ok) throw new Error("Proxy request failed");
 
     const data = await res.json();
+    if (requestId !== latestFetchId) return;
+
     const movies = data.results || [];
     totalPages = Math.min(data.total_pages || 1, 500);
 
@@ -161,6 +166,8 @@ async function fetchMovies(params, titleText, page = 1) {
     renderCards(movies);
     updatePagination();
   } catch {
+    if (requestId !== latestFetchId) return;
+
     totalPages = 1;
     updatePagination();
     statusText.textContent = "Could not load films";
@@ -179,28 +186,30 @@ function renderModalContent(movie, details = null) {
   const tmdbUrl = `https://www.themoviedb.org/movie/${movie.id}`;
 
   modalContent.innerHTML = `
-    <div class="modal-layout">
-      ${
-        poster
-          ? `<img class="modal-poster" src="${poster}" alt="${escapeHtml(full.title)}" />`
-          : `<div class="modal-poster no-poster">No poster</div>`
-      }
-      <div>
-        <div class="modal-top">
-          <h2>${escapeHtml(full.title)}</h2>
-          <button class="close-btn" id="close-modal" aria-label="Close">×</button>
-        </div>
-        <p class="modal-meta">${rating} · ${year}${runtime ? ` · ${runtime}` : ""}</p> <div class="modal-genres"> ${genres.map((g) => `<span>${escapeHtml(g)}</span>`).join("")}
-        </div>
-        <p class="modal-summary">${escapeHtml(full.overview || "No synopsis available.")}</p>
-        <div class="modal-actions">
-          <button class="btn-primary ${saved ? "saved" : ""}" id="modal-save-btn">
-            ${saved ? "Remove from Watchlist" : "+ Add to Watchlist"}
-          </button>
-          <a class="btn-link" href="${tmdbUrl}" target="_blank" rel="noopener">View on TMDB</a>
-        </div>
-      </div>
-    </div>
+  <div class="modal-layout">
+  ${
+    poster
+    ? `<img class="modal-poster" src="${poster}" alt="${escapeHtml(full.title)}" />`
+    : `<div class="modal-poster no-poster">No poster</div>`
+  }
+  <div>
+  <div class="modal-top">
+  <h2>${escapeHtml(full.title)}</h2>
+  <button class="close-btn" id="close-modal" aria-label="Close">×</button>
+  </div>
+  <p class="modal-meta">${rating} · ${year}${runtime ? ` · ${runtime}` : ""}</p>
+  <div class="modal-genres">
+  ${genres.map((g) => `<span>${escapeHtml(g)}</span>`).join("")}
+  </div>
+  <p class="modal-summary">${escapeHtml(full.overview || "No synopsis available.")}</p>
+  <div class="modal-actions">
+  <button class="btn-primary ${saved ? "saved" : ""}" id="modal-save-btn">
+  ${saved ? "Remove from Watchlist" : "+ Add to Watchlist"}
+  </button>
+  <a class="btn-link" href="${tmdbUrl}" target="_blank" rel="noopener">View on TMDB</a>
+  </div>
+  </div>
+  </div>
   `;
 
   document.getElementById("close-modal").addEventListener("click", () => modal.close());
@@ -222,6 +231,7 @@ function renderModalContent(movie, details = null) {
 }
 
 async function openModal(movie) {
+  activeModalId = movie.id;
   renderModalContent(movie);
   if (!modal.open) {
     modal.showModal();
@@ -231,7 +241,7 @@ async function openModal(movie) {
     const res = await fetch(`/api/movies?id=${movie.id}`);
     if (res.ok) {
       const details = await res.json();
-      if (modal.open) {
+      if (modal.open && activeModalId === movie.id) {
         renderModalContent(movie, details);
       }
     }
@@ -281,6 +291,7 @@ searchInput.addEventListener("input", (e) => {
 // Genre filters
 genreBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
+    clearTimeout(searchTimer);
     activeGenre = btn.dataset.genre;
     activeGenreLabel = btn.dataset.label;
     showingWatchlist = false;
@@ -298,11 +309,13 @@ genreBtns.forEach((btn) => {
 
 // Watchlist toggle
 watchlistBtn.addEventListener("click", () => {
+  clearTimeout(searchTimer);
   showingWatchlist = !showingWatchlist;
   watchlistBtn.classList.toggle("active", showingWatchlist);
   searchInput.value = "";
 
   if (showingWatchlist) {
+    latestFetchId++;
     genreBar.style.display = "none";
     viewTitle.textContent = "Your Watchlist";
     statusText.textContent = `${watchlist.length} saved`;
@@ -318,12 +331,19 @@ watchlistBtn.addEventListener("click", () => {
 // Logo reset
 logoReset.addEventListener("click", (e) => {
   e.preventDefault();
+  clearTimeout(searchTimer);
+  activeGenre = "all";
+  activeGenreLabel = "Popular Movies";
   searchInput.value = "";
   showingWatchlist = false;
   watchlistBtn.classList.remove("active");
   genreBar.style.display = "flex";
-  const params = activeGenre === "all" ? {} : { genre: activeGenre };
-  fetchMovies(params, activeGenreLabel, 1);
+
+  genreBtns.forEach((b) => {
+    b.classList.toggle("active", b.dataset.genre === "all");
+  });
+
+  fetchMovies({}, activeGenreLabel, 1);
 });
 
 // Card click + keyboard support
@@ -350,6 +370,10 @@ grid.addEventListener("keydown", (e) => {
 
 modal.addEventListener("click", (e) => {
   if (e.target === modal) modal.close();
+});
+
+modal.addEventListener("close", () => {
+  activeModalId = null;
 });
 
 saveWatchlist();
