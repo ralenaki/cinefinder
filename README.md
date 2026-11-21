@@ -37,13 +37,16 @@ Browser (script.js)  ──►  /api/movies (Vercel Serverless Function)  ──
 
 ```text
 ├── api/
-│   └── movies.js     # Serverless proxy for TMDB requests
-├── dev-server.js     # Zero-dependency local Node server for development
-├── index.html        # Semantic markup + native <dialog> modal
-├── style.css         # Responsive dark UI (CSS Grid, Flexbox, aspect-ratio)
-├── script.js         # Client state, debounced search, pagination, localStorage
-├── .env.example      # Required environment variable template
-└── .gitignore        # Excludes .env files and local config
+│   └── movies.js              # Serverless proxy for TMDB requests
+├── assets/
+│   ├── desktop_preview.png    # Preview on desktop browser
+│   └── mobile_preview.png     # Preview on mobile browser
+├── dev-server.js              # Zero-dependency local Node server for development
+├── index.html                 # Semantic markup + native <dialog> modal
+├── style.css                  # Responsive dark UI (CSS Grid, Flexbox, aspect-ratio)
+├── script.js                  # Client state, debounced search, pagination, localStorage
+├── .env.example               # Required environment variable template
+└── .gitignore                 # Excludes .env files and local config
 ```
 
 ## Running Locally & Deploying
