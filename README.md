@@ -7,7 +7,7 @@ A responsive movie discovery web app built with vanilla HTML, CSS, and JavaScrip
 <p align="center">
   <img src="assets/desktop_preview.png" alt="CineFinder desktop view" width="76%" />
   &nbsp;
-  <img src="assets/mobile_preview.png" alt="CineFinder mobile view" width="20%" />
+  <img src="assets/mobile_preview.png" alt="CineFinder mobile view" width="19.74%" />
 </p>
 
 ## Architecture & API Security
