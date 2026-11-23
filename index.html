@@ -20,6 +20,7 @@
         <input
           type="search"
           id="search-input"
+          aria-label="Search movies"
           placeholder="Search movies (e.g. Parasite, Dune, Interstellar)..."
           autocomplete="off"
         />
@@ -59,7 +60,7 @@
     </nav>
   </main>
 
-  <dialog id="detail-modal" class="modal">
+  <dialog id="detail-modal" class="modal" aria-labelledby="modal-title">
     <div class="modal-inner" id="modal-content"></div>
   </dialog>
 

@@ -184,6 +184,13 @@ main {
   transition: transform 0.14s ease, border-color 0.14s ease;
 }
 
+a:focus-visible,
+button:focus-visible,
+.card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .card:hover {
   transform: translateY(-3px);
   border-color: #464e60;

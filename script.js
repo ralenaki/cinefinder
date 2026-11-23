@@ -194,8 +194,8 @@ function renderModalContent(movie, details = null) {
   }
   <div>
   <div class="modal-top">
-  <h2>${escapeHtml(full.title)}</h2>
-  <button class="close-btn" id="close-modal" aria-label="Close">×</button>
+  <h2 id="modal-title">${escapeHtml(full.title)}</h2>
+  <button type="button" class="close-btn" id="close-modal" aria-label="Close movie details">×</button>
   </div>
   <p class="modal-meta">${rating} · ${year}${runtime ? ` · ${runtime}` : ""}</p>
   <div class="modal-genres">
@@ -203,7 +203,7 @@ function renderModalContent(movie, details = null) {
   </div>
   <p class="modal-summary">${escapeHtml(full.overview || "No synopsis available.")}</p>
   <div class="modal-actions">
-  <button class="btn-primary ${saved ? "saved" : ""}" id="modal-save-btn">
+  <button type="button" class="btn-primary ${saved ? "saved" : ""}" id="modal-save-btn">
   ${saved ? "Remove from Watchlist" : "+ Add to Watchlist"}
   </button>
   <a class="btn-link" href="${tmdbUrl}" target="_blank" rel="noopener">View on TMDB</a>
