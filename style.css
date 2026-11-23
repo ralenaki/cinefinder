@@ -191,6 +191,16 @@ button:focus-visible,
   outline-offset: 3px;
 }
 
+.cards-grid.is-loading {
+  opacity: 0.45;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.empty-box .retry-btn {
+  margin-left: 0.5rem;
+}
+
 .card:hover {
   transform: translateY(-3px);
   border-color: #464e60;

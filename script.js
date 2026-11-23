@@ -148,6 +148,7 @@ async function fetchMovies(params, titleText, page = 1) {
 
   viewTitle.textContent = titleText;
   statusText.textContent = "Loading...";
+  grid.classList.add("is-loading");
 
   try {
     const queryString = new URLSearchParams({ ...params, page }).toString();
@@ -156,6 +157,7 @@ async function fetchMovies(params, titleText, page = 1) {
 
     const data = await res.json();
     if (requestId !== latestFetchId) return;
+    grid.classList.remove("is-loading");
 
     const movies = data.results || [];
     totalPages = Math.min(data.total_pages || 1, 500);
@@ -168,10 +170,11 @@ async function fetchMovies(params, titleText, page = 1) {
   } catch {
     if (requestId !== latestFetchId) return;
 
+    grid.classList.remove("is-loading");
     totalPages = 1;
     updatePagination();
     statusText.textContent = "Could not load films";
-    grid.innerHTML = `<div class="empty-box">Unable to fetch movies right now. Make sure the app is running through the /api/movies proxy.</div>`;
+    grid.innerHTML = `<div class="empty-box">Something went wrong while loading movies. <button type="button" class="page-btn retry-btn">Try again</button></div>`;
   }
 }
 
@@ -268,6 +271,8 @@ nextBtn.addEventListener("click", () => {
 // Debounced live search
 searchInput.addEventListener("input", (e) => {
   clearTimeout(searchTimer);
+  latestFetchId++;
+  grid.classList.remove("is-loading");
   const query = e.target.value.trim();
 
   if (!query) {
@@ -282,6 +287,7 @@ searchInput.addEventListener("input", (e) => {
   showingWatchlist = false;
   watchlistBtn.classList.remove("active");
   genreBar.style.display = "none";
+  statusText.textContent = "Searching...";
 
   searchTimer = setTimeout(() => {
     fetchMovies({ q: query }, `Results for "${query}"`, 1);
@@ -316,6 +322,7 @@ watchlistBtn.addEventListener("click", () => {
 
   if (showingWatchlist) {
     latestFetchId++;
+    grid.classList.remove("is-loading");
     genreBar.style.display = "none";
     viewTitle.textContent = "Your Watchlist";
     statusText.textContent = `${watchlist.length} saved`;
@@ -354,6 +361,11 @@ function handleCardOpen(card) {
 }
 
 grid.addEventListener("click", (e) => {
+  if (e.target.closest(".retry-btn")) {
+    fetchMovies(currentParams, currentTitle, currentPage);
+    return;
+  }
+
   const card = e.target.closest(".card");
   if (card) handleCardOpen(card);
 });
